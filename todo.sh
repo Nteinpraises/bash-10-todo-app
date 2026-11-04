@@ -42,7 +42,18 @@ cmd_add() {
 }
 
 cmd_list() {
-    echo "list: not yet built"
+    init_storage
+
+    if [[ ! -s "$DATA_FILE" ]]; then
+        echo "no tasks yet, add one with: todo.sh add \"your task\""
+        return
+    fi
+
+    printf "%-3s %-7s %-9s %s\n" ID status priority title
+
+    while IFS='|' read -r id status priority title; do 
+        printf "%-3s %-7s %-9s %s\n" "$id" "$status" "$priority" "$title"
+    done < "$DATA_FILE"
 }
 
 main() {
