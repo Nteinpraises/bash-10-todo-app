@@ -20,8 +20,25 @@ cmd_help() {
 EOF
 }
 
+init_storage() {
+    local dir
+    dir=$(dirname "$DATA_FILE")
+    mkdir -p "$dir" || die "cannot create folder '$dir'"
+    touch "$DATA_FILE" || die "cannot create file '$DATA_FILE'"
+}
+
+next_id() {
+    awk -F'|' 'BEGIN { max = 0 } $1 > max { max = $1 } END { print max + 1 }' "$DATA_FILE"
+}
+
 cmd_add() {
-    echo "add: not built yet ($*)"
+    init_storage
+    local title="$*"
+    local id 
+    id=$(next_id)
+
+    echo "$id|todo|medium|$title" >> "$DATA_FILE"
+    echo "added task $id"
 }
 
 cmd_list() {
